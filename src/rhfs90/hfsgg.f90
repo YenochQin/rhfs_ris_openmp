@@ -137,7 +137,7 @@
 !$OMP PARALLEL DEFAULT(SHARED) PRIVATE(IC, IR, CNUM, LCNUM, ISPARC, ITJPOC, ITJPOR, &
 !$OMP& IDIFF, KT, ELEMNT, ELEMNTGJ, ELEMNTDGJ, IA, IB, TSHELL, &
 !$OMP& K, KK, LOC1, LOC2, CONTR, CONTRGJ, CONTRDGJ)
-!$OMP DO SCHEDULE(STATIC, 25)
+!$OMP DO SCHEDULE(DYNAMIC, 10)
       DO IC = 1, NCF
 !
 !   Output IC on the screen to show how far the calculation has proceeded
@@ -185,9 +185,9 @@
                    .AND. KT==2)) CYCLE
 !
 !   Critical section: ONEPARTICLEJJ accesses global state
-!$OMP CRITICAL(ONEPARTICLE_CALC)
+!$OMP CRITICAL
                CALL ONEPARTICLEJJ(KT,IPT,IC,IR,IA,IB,TSHELL)
-!$OMP END CRITICAL(ONEPARTICLE_CALC)
+!$OMP END CRITICAL
 !GG               CALL TNSRJJ (KT, IPT, IC, IR, IA, IB, TSHELL)
 !
 !   Accumulate the contribution from the one-body operators;
@@ -229,7 +229,7 @@
 !   contributions from the matrix elements to obtain total contributions
 !   Critical section: Updating shared result arrays
 !
-!$OMP CRITICAL(RESULT_UPDATE)
+!$OMP CRITICAL
                DO K = 1, NVEC
                   DO KK = 1, NVEC
                      LOC1 = (K - 1)*NCF
@@ -272,7 +272,7 @@
                      ENDIF
                   END DO
                END DO
-!$OMP END CRITICAL(RESULT_UPDATE)
+!$OMP END CRITICAL
 !
             END DO
 !
