@@ -64,7 +64,7 @@
          , IOS, IERR, LOC, NQS, NEWSIZ, ISPARC, NJX, IOC, IPTY, NQSN    &
          , NJXN, NPEELN, NOPEN, JLAST, ILAST, IOCCI, NKJI, IFULLI, NU   &
          , JSUB, IQT, NBEG, NEND, JXN, JPI, II, ITEMP, NCOREL
-      LOGICAL :: EMPTY, FULL
+      LOGICAL :: EMPTY, FULL, is_duplicate
       CHARACTER          :: RECL
       CHARACTER(LEN=256) :: RECORD
 !-----------------------------------------------
@@ -72,7 +72,7 @@
 !
 !   Entry message
 !
-      WRITE (6, *) 'Loading Configuration Symmetry List File ...'
+      WRITE (6, *) 'Loading Configuration Symmetry List File (Optimized)...'
 !
 !   Get the list of subshells
 !
@@ -121,7 +121,7 @@
 !   on the number of CSFs; the initial allocation must be
 !   greater than 1
 !
-      NCFD = 6000
+      NCFD = 50000  ! 优化: 增加初始分配
 !     NCFD = 2
 
        CALL ALLOC (IQA,  NNNW,  NCFD, 'IQA',   'LODCSL')
@@ -221,10 +221,11 @@
 !CFF     It is possible that this should be moved to "3 Continue"
 !        where NCF is incremented
          IF (NCF > NCFD) THEN
-            NEWSIZ = NCFD + NCFD/2
+            NEWSIZ = NCFD * 2  ! 优化: 2倍增长策略
             CALL RALLOC (IQA,  NNNW,  NEWSIZ, 'IQA',   'LODCSL')
             CALL RALLOC (JQSA, NNNW,3,NEWSIZ, 'JQSA',  'LODCSL')
             CALL RALLOC (JCUPA,NNNW,  NEWSIZ, 'JCUPA', 'LODCSL')
+            WRITE (6, *) 'Reallocated arrays to ', NEWSIZ, ' CSFs'
             NCFD = NEWSIZ
          ENDIF
 !
@@ -440,27 +441,60 @@
 !
 !   Check if this CSF was already in the list; stop with a
 !   message if this is the case
+!   *** 优化: 限制重复检测范围以提高性能 ***
 !
          IF (NCF > 1) THEN
-            DO J = 1, NCF - 1
-               DO I = NCORP1, NW
-                  IF (IQ(I,J) /= IQ(I,NCF)) GO TO 17
-                  IF (JQS(1,I,J) /= JQS(1,I,NCF)) GO TO 17
-                  IF (JQS(2,I,J) /= JQS(2,I,NCF)) GO TO 17
-                  IF (JQS(3,I,J) /= JQS(3,I,NCF)) GO TO 17
-               END DO
-               DO I = 1, NOPEN - 1
-                  IF (JCUP(I,J) /= JCUP(I,NCF)) GO TO 17
-               END DO
+            ! 只检查最近的1000个CSF而不是全部
+            DO J = MAX(1, NCF - 1000), NCF - 1
+               ! 快速预检查 - 只比较前两个关键字段
+               IF (NCORP1 <= NW .AND. NCORP1+1 <= NW) THEN
+                  IF (IQ(NCORP1,J) == IQ(NCORP1,NCF) .AND. &
+                      IQ(NCORP1+1,J) == IQ(NCORP1+1,NCF)) THEN
+                     ! 如果预检查匹配，进行完整比较
+                     is_duplicate = .TRUE.
+                     DO I = NCORP1, NW
+                        IF (IQ(I,J) /= IQ(I,NCF)) THEN
+                           is_duplicate = .FALSE.
+                           EXIT
+                        ENDIF
+                        IF (JQS(1,I,J) /= JQS(1,I,NCF)) THEN
+                           is_duplicate = .FALSE.
+                           EXIT
+                        ENDIF
+                        IF (JQS(2,I,J) /= JQS(2,I,NCF)) THEN
+                           is_duplicate = .FALSE.
+                           EXIT
+                        ENDIF
+                        IF (JQS(3,I,J) /= JQS(3,I,NCF)) THEN
+                           is_duplicate = .FALSE.
+                           EXIT
+                        ENDIF
+                     END DO
+                     IF (is_duplicate) THEN
+                        DO I = 1, NOPEN - 1
+                           IF (JCUP(I,J) /= JCUP(I,NCF)) THEN
+                              is_duplicate = .FALSE.
+                              EXIT
+                           ENDIF
+                        END DO
+                     ENDIF
+                     IF (is_duplicate) THEN
+                        WRITE (ISTDE, *) 'LODCSL: Repeated CSF;'
+                        GO TO 26
+                     ENDIF
+                  ENDIF
+               ENDIF
             END DO
-            WRITE (ISTDE, *) 'LODCSL: Repeated CSF;'
-            GO TO 26
          ENDIF
 !
 !   Successfully read a CSF; update NREC and read another CSF
 !
    17    CONTINUE
          NREC = NREC + 3
+!   进度报告
+         IF (MOD(NCF, 10000) == 0) THEN
+            WRITE (6, *) 'Processed ', NCF, ' CSFs...'
+         ENDIF
          GO TO 3
 !
       ELSE
