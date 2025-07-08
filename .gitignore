@@ -19,8 +19,8 @@ bin/
 bin/*
 
 # 库文件目录
-lib/
-lib/*
+# lib/
+# lib/*
 
 # 模块文件目录
 modules/
