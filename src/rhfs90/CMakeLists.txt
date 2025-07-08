@@ -1,4 +1,11 @@
-add_executable(rhfs
+# Determine executable name based on OpenMP availability
+if(OpenMP_Fortran_FOUND)
+    set(RHFS_EXECUTABLE_NAME "rhfs_omp")
+else()
+    set(RHFS_EXECUTABLE_NAME "rhfs")
+endif()
+
+add_executable(${RHFS_EXECUTABLE_NAME}
     engouth.f90
     engouth_I.f90
     gethfd.f90
@@ -20,11 +27,11 @@ add_executable(rhfs
     hfsgg_I.f90
     hfs92.f90
 )
-target_link_libraries_Fortran(rhfs PUBLIC rang90 mcp90 9290 mod)
+target_link_libraries_Fortran(${RHFS_EXECUTABLE_NAME} PUBLIC rang90 mcp90 9290 mod)
 
 # Link OpenMP if available
 if(OpenMP_Fortran_FOUND)
-    target_link_libraries(rhfs PUBLIC OpenMP::OpenMP_Fortran)
+    target_link_libraries(${RHFS_EXECUTABLE_NAME} PUBLIC OpenMP::OpenMP_Fortran)
 endif()
 
-install(TARGETS rhfs DESTINATION bin/)
+install(TARGETS ${RHFS_EXECUTABLE_NAME} DESTINATION bin/)

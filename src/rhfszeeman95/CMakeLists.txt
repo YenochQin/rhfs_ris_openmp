@@ -1,4 +1,11 @@
-add_executable(rhfszeeman95
+# Determine executable name based on OpenMP availability
+if(OpenMP_Fortran_FOUND)
+    set(RHFSZEEMAN_EXECUTABLE_NAME "rhfszeeman95_omp")
+else()
+    set(RHFSZEEMAN_EXECUTABLE_NAME "rhfszeeman95")
+endif()
+
+add_executable(${RHFSZEEMAN_EXECUTABLE_NAME}
     opt6_C.f90
     engouth_I.f90
     gethfd_I.f90
@@ -20,11 +27,11 @@ add_executable(rhfszeeman95
     strsum.f90
     getmixblock.f90
 )
-target_link_libraries_Fortran(rhfszeeman95 PUBLIC 9290 mod rang90 mcp90 9290 mod)
+target_link_libraries_Fortran(${RHFSZEEMAN_EXECUTABLE_NAME} PUBLIC 9290 mod rang90 mcp90 9290 mod)
 
 # Link OpenMP if available
 if(OpenMP_Fortran_FOUND)
-    target_link_libraries(rhfszeeman95 PUBLIC OpenMP::OpenMP_Fortran)
+    target_link_libraries(${RHFSZEEMAN_EXECUTABLE_NAME} PUBLIC OpenMP::OpenMP_Fortran)
 endif()
 
-install(TARGETS rhfszeeman95 DESTINATION bin/)
+install(TARGETS ${RHFSZEEMAN_EXECUTABLE_NAME} DESTINATION bin/)

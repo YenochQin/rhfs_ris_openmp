@@ -1,4 +1,11 @@
-add_executable(ris4
+# Determine executable name based on OpenMP availability
+if(OpenMP_Fortran_FOUND)
+    set(RIS4_EXECUTABLE_NAME "ris4_omp")
+else()
+    set(RIS4_EXECUTABLE_NAME "ris4")
+endif()
+
+add_executable(${RIS4_EXECUTABLE_NAME}
     ris_C.f90
     teilst_C.f90
     angdata_I.f90
@@ -51,11 +58,11 @@ add_executable(ris4
     vinti.f90
     engout.f90
 )
-target_link_libraries_Fortran(ris4 PUBLIC mod 9290 rang90 mcp90 mod 9290)
+target_link_libraries_Fortran(${RIS4_EXECUTABLE_NAME} PUBLIC mod 9290 rang90 mcp90 mod 9290)
 
 # Link OpenMP if available
 if(OpenMP_Fortran_FOUND)
-    target_link_libraries(ris4 PUBLIC OpenMP::OpenMP_Fortran)
+    target_link_libraries(${RIS4_EXECUTABLE_NAME} PUBLIC OpenMP::OpenMP_Fortran)
 endif()
 
-install(TARGETS ris4 DESTINATION bin/)
+install(TARGETS ${RIS4_EXECUTABLE_NAME} DESTINATION bin/)

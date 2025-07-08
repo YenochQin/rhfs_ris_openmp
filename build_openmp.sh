@@ -191,16 +191,27 @@ echo -e "${YELLOW}验证可执行文件...${NC}"
 
 MISSING_EXECUTABLES=()
 
-if [ ! -f "bin/rhfs" ]; then
-    MISSING_EXECUTABLES+=("bin/rhfs")
+# 根据OpenMP支持设置可执行文件名称
+if [ "$NO_OPENMP" = true ]; then
+    RHFS_EXE="bin/rhfs"
+    RHFSZEEMAN_EXE="bin/rhfszeeman95"
+    RIS4_EXE="bin/ris4"
+else
+    RHFS_EXE="bin/rhfs_omp"
+    RHFSZEEMAN_EXE="bin/rhfszeeman95_omp"
+    RIS4_EXE="bin/ris4_omp"
 fi
 
-if [ ! -f "bin/rhfszeeman95" ]; then
-    MISSING_EXECUTABLES+=("bin/rhfszeeman95")
+if [ ! -f "$RHFS_EXE" ]; then
+    MISSING_EXECUTABLES+=("$RHFS_EXE")
 fi
 
-if [ ! -f "bin/ris4" ]; then
-    MISSING_EXECUTABLES+=("bin/ris4")
+if [ ! -f "$RHFSZEEMAN_EXE" ]; then
+    MISSING_EXECUTABLES+=("$RHFSZEEMAN_EXE")
+fi
+
+if [ ! -f "$RIS4_EXE" ]; then
+    MISSING_EXECUTABLES+=("$RIS4_EXE")
 fi
 
 if [ ${#MISSING_EXECUTABLES[@]} -gt 0 ]; then
@@ -214,7 +225,7 @@ fi
 # 显示生成的可执行文件信息
 echo -e "${GREEN}所有可执行文件生成成功!${NC}"
 echo "生成的可执行文件:"
-for exe in bin/rhfs bin/rhfszeeman95 bin/ris4; do
+for exe in "$RHFS_EXE" "$RHFSZEEMAN_EXE" "$RIS4_EXE"; do
     if [ -f "$exe" ]; then
         EXE_SIZE=$(du -h "$exe" | cut -f1)
         echo "  - $exe ($EXE_SIZE)"
@@ -238,7 +249,7 @@ echo "构建类型: $BUILD_TYPE"
 echo "OpenMP支持: $([ "$NO_OPENMP" = true ] && echo "否" || echo "是")"
 echo
 echo "生成的文件:"
-for exe in bin/rhfs bin/rhfszeeman95 bin/ris4; do
+for exe in "$RHFS_EXE" "$RHFSZEEMAN_EXE" "$RIS4_EXE"; do
     if [ -f "$exe" ]; then
         EXE_SIZE=$(du -h "$exe" | cut -f1)
         echo "  - $exe ($EXE_SIZE)"
@@ -251,18 +262,18 @@ echo -e "${YELLOW}使用建议:${NC}"
 if [ "$NO_OPENMP" = false ]; then
     echo "  设置线程数: export OMP_NUM_THREADS=4"
     echo "  运行程序:"
-    echo "    RHFS90 (超精细结构): ./bin/rhfs"
-    echo "    RHFSZEEMAN95 (超精细和塞曼效应): ./bin/rhfszeeman95"  
-    echo "    RIS4 (同位素位移): ./bin/ris4"
+    echo "    RHFS90 (超精细结构): ./$RHFS_EXE"
+    echo "    RHFSZEEMAN95 (超精细和塞曼效应): ./$RHFSZEEMAN_EXE"  
+    echo "    RIS4 (同位素位移): ./$RIS4_EXE"
     echo "  或使用脚本: ./run_parallel.sh 4 your_input_name"
 else
     echo "  运行串行版本:"
-    echo "    RHFS90: ./bin/rhfs"
-    echo "    RHFSZEEMAN95: ./bin/rhfszeeman95"
-    echo "    RIS4: ./bin/ris4"
+    echo "    RHFS90: ./$RHFS_EXE"
+    echo "    RHFSZEEMAN95: ./$RHFSZEEMAN_EXE"
+    echo "    RIS4: ./$RIS4_EXE"
 fi
 
-echo "  查看帮助: ./bin/rhfs --help (或其他程序的 --help)"
+echo "  查看帮助: ./$RHFS_EXE --help (或其他程序的 --help)"
 echo
 
 echo -e "${GREEN}GRASP程序包 OpenMP 并行编译成功完成!${NC}" 
