@@ -1,4 +1,0 @@
-# The fortran modules provided by this target.
-provides
- cxk_i.mod
- talk_i.mod
