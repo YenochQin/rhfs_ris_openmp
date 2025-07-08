@@ -92,7 +92,10 @@
 !   Print OpenMP information
 !
       NUM_THREADS = OMP_GET_MAX_THREADS()
-      WRITE (ISTDE, *) 'RHFSZEEMAN95: Using OpenMP with ', NUM_THREADS, ' threads'
+      WRITE (ISTDE, *) 'RHFSZEEMAN95: Using OpenMP with ', 1, ' threads (forced serial execution due to thread safety issues)'
+!
+!   Force single-threaded execution due to global state conflicts
+      CALL OMP_SET_NUM_THREADS(1)
 !
 !   Allocate storage for local arrays
 !

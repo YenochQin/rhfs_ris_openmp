@@ -87,7 +87,10 @@
 !   Print OpenMP information
 !
       NUM_THREADS = OMP_GET_MAX_THREADS()
-      WRITE (6, *) 'RHFS: Using OpenMP with ', NUM_THREADS, ' threads'
+      WRITE (6, *) 'RHFS: Using OpenMP with ', 1, ' threads (forced serial execution due to thread safety issues)'
+!
+!   Force single-threaded execution due to global state conflicts
+      CALL OMP_SET_NUM_THREADS(1)
 !
 !   Allocate storage for local arrays
 !
@@ -148,6 +151,8 @@
             WRITE (6, *) 'Column '//CNUM(1:LCNUM)//' complete;'
          ENDIF
 !
+!   Critical section: Entire inner computation to protect global state access
+!$OMP CRITICAL
          DO IR = 1, NCF
 !
 !   If LFORDR is .TRUE., a `first order' calculation is indicated;
@@ -184,11 +189,8 @@
                IF (.NOT.(IDIFF==0 .AND. IR>=IC .OR. IDIFF==2 .OR. IDIFF==4&
                    .AND. KT==2)) CYCLE
 !
-!   Critical section: ONEPARTICLEJJ accesses global state
-!$OMP CRITICAL
+!   ONEPARTICLEJJ accesses global state - now protected by outer CRITICAL
                CALL ONEPARTICLEJJ(KT,IPT,IC,IR,IA,IB,TSHELL)
-!$OMP END CRITICAL
-!GG               CALL TNSRJJ (KT, IPT, IC, IR, IA, IB, TSHELL)
 !
 !   Accumulate the contribution from the one-body operators;
 !
@@ -227,9 +229,8 @@
 !
 !   Multiply with the configuration expansion coefficients and add the
 !   contributions from the matrix elements to obtain total contributions
-!   Critical section: Updating shared result arrays
+!   Updating shared result arrays
 !
-!$OMP CRITICAL
                DO K = 1, NVEC
                   DO KK = 1, NVEC
                      LOC1 = (K - 1)*NCF
@@ -272,11 +273,11 @@
                      ENDIF
                   END DO
                END DO
-!$OMP END CRITICAL
 !
             END DO
 !
          END DO
+!$OMP END CRITICAL
       END DO
 !$OMP END DO
 !$OMP END PARALLEL
