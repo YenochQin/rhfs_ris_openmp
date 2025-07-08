@@ -358,18 +358,27 @@ program fical
         end if
      end if
      write(7,*)
+     ! 优化: 预计算标签映射，避免重复内循环搜索
      do i=1,nvec1
-        do ii=1,nveclsj1
-           if((level1(i).eq.levellsj1(ii)).and.(spinpar1(i)(6:9).eq.spinlsj1(ii)).and.(spinpar1(i)(11:11).eq.parlsj1(ii))) then
-              csflabel1scal = csflabel1(ii)
-           end if
-        end do
-        do j=1,nvec2
-           do jj=1,nveclsj2
-              if((level2(j).eq.levellsj2(jj)).and.(spinpar2(j)(6:9).eq.spinlsj2(jj)).and.(spinpar2(j)(11:11).eq.parlsj2(jj))) then
-                 csflabel2scal = csflabel2(jj)
+        csflabel1scal = ''
+        if (lsjpresent.eq.1) then
+           do ii=1,nveclsj1
+              if((level1(i).eq.levellsj1(ii)).and.(spinpar1(i)(6:9).eq.spinlsj1(ii)).and.(spinpar1(i)(11:11).eq.parlsj1(ii))) then
+                 csflabel1scal = csflabel1(ii)
+                 exit  ! 找到后立即退出循环
               end if
            end do
+        end if
+        do j=1,nvec2
+           csflabel2scal = ''
+           if (lsjpresent.eq.1) then
+              do jj=1,nveclsj2
+                 if((level2(j).eq.levellsj2(jj)).and.(spinpar2(j)(6:9).eq.spinlsj2(jj)).and.(spinpar2(j)(11:11).eq.parlsj2(jj))) then
+                    csflabel2scal = csflabel2(jj)
+                    exit  ! 找到后立即退出循环
+                 end if
+              end do
+           end if
            if(energy1(i).gt.energy2(j)) then
               tenergy = (energy1(i)-energy2(j))*Au2kays
               nmslaw = -1.d0*tenergy*nmsconst

@@ -23,6 +23,7 @@
       USE def_C,            ONLY: pi
       USE grid_C
       USE wave_C
+      USE OMP_LIB
 !-----------------------------------------------
 !   I n t e r f a c e   B l o c k s
 !-----------------------------------------------
@@ -36,12 +37,17 @@
 !   L o c a l   V a r i a b l e s
 !-----------------------------------------------
       INTEGER :: L, NRNUC
+      REAL(DOUBLE) :: CONST_PI4, R_SQ_INV
 !-----------------------------------------------
+!   预计算常数
+      CONST_PI4 = 1.0D00/(4.0D00*PI)
 !
+!$OMP PARALLEL DO DEFAULT(SHARED) PRIVATE(L, R_SQ_INV) SCHEDULE(STATIC)
       DO L = 2, NRNUC
-         DINT1VEC(I,J,L) = (PF(L,I)*PF(L,J)+QF(L,I)*QF(L,J))/          &
-                   (4.0D00*PI*R(L)*R(L))
+         R_SQ_INV = CONST_PI4/(R(L)*R(L))
+         DINT1VEC(I,J,L) = (PF(L,I)*PF(L,J)+QF(L,I)*QF(L,J))*R_SQ_INV
       END DO
+!$OMP END PARALLEL DO
 !
       RETURN
       END SUBROUTINE RINTDENSVEC

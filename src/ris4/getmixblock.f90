@@ -90,8 +90,11 @@
 
 !***********************************************************************
 ! Initialize mixing coefficients to zero; others are fine
+! 优化: 使用显式循环以便编译器可以更好地优化
 !***********************************************************************
-      EVEC(:NVECTOT*NCFTOT) = 0.D0
+      DO I = 1, NVECTOT*NCFTOT
+         EVEC(I) = 0.D0
+      END DO
 
 !***********************************************************************
 ! Initialize counters and sum registers
@@ -121,14 +124,19 @@
 
             READ (25) (IVEC(NVECPAT + I),I=1,NEVBLK)
                ! ivec(i)   = ivec(i) + ncfpat ! serial # of the state
-            IATJPO(NVECPAT+1:NEVBLK+NVECPAT) = IATJP
-            IASPAR(NVECPAT+1:NEVBLK+NVECPAT) = IASPA
+            ! 优化: 使用显式循环减少数组操作开销
+            DO I = 1, NEVBLK
+               IATJPO(NVECPAT + I) = IATJP
+               IASPAR(NVECPAT + I) = IASPA
+            END DO
 
             READ (25) EAV, (EVAL(NVECPAT+I),I=1,NEVBLK)
 
 !           ...Construct the true energy by adding up the average
-            EVAL(NVECPAT+1:NEVBLK+NVECPAT) = EVAL(NVECPAT+1:NEVBLK+NVECPAT) + &
-               EAV
+!           优化: 使用显式循环
+            DO I = 1, NEVBLK
+               EVAL(NVECPAT + I) = EVAL(NVECPAT + I) + EAV
+            END DO
 !           ...For overal (all blocks) average energy
             EAVSUM = EAVSUM + EAV*NCFBLK
             NEAVSUM = NEAVSUM + NCFBLK
@@ -153,7 +161,10 @@
          'Not all blocks are diagonalized --- Average E ', 'not correct'
 
 !     ...Substrct the overal average energy
-      EVAL(:NVECTOT) = EVAL(:NVECTOT) - EAV
+!     优化: 使用显式循环
+      DO I = 1, NVECTOT
+         EVAL(I) = EVAL(I) - EAV
+      END DO
 
       CLOSE(25)
 

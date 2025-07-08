@@ -137,13 +137,13 @@
 !$OMP PARALLEL DEFAULT(SHARED) PRIVATE(IC, IR, CNUM, LCNUM, ISPARC, ITJPOC, ITJPOR, &
 !$OMP& IDIFF, KT, ELEMNT, ELEMNTGJ, ELEMNTDGJ, IA, IB, TSHELL, &
 !$OMP& K, KK, LOC1, LOC2, CONTR, CONTRGJ, CONTRDGJ)
-!$OMP DO SCHEDULE(DYNAMIC)
+!$OMP DO SCHEDULE(STATIC, 25)
       DO IC = 1, NCF
 !
 !   Output IC on the screen to show how far the calculation has proceeded
 !   Only from master thread to avoid output conflicts
 !
-         IF (OMP_GET_THREAD_NUM() == 0 .AND. MOD(IC,100) == 0) THEN
+         IF (OMP_GET_THREAD_NUM() == 0 .AND. MOD(IC,50) == 0) THEN
             CALL CONVRT (IC, CNUM, LCNUM)
             WRITE (6, *) 'Column '//CNUM(1:LCNUM)//' complete;'
          ENDIF
@@ -199,7 +199,6 @@
                            IF (ABS(TSHELL(IA)) <= CUTOFF) CYCLE
                            ELEMNT = ELEMNT + AMELT(KT,IA,IA)*RINTME(KT,IA,IA)*&
                               TSHELL(IA)
-                           CYCLE
                         END DO
                      ELSE
                         DO IA = 1, NW
@@ -343,7 +342,7 @@
                      IVEC(II), LABJ(JJII), LABP((IASPAR(II)+3)/2), AFA1*HFC(1,&
                      NVEC*(I-1)+II), BFA1*HFC(3,NVEC*(I-1)+II)
 !
-!   Output diagonal hfs and g_j factors to file <name>.h or <name>.ch
+!   Output diagonal hfs and g_j factors to file <n>.h or <n>.ch
 !
                   IF (I == II) THEN
                      GJ = CVAC*GJA1*GJC(NVEC*(I-1)+II)

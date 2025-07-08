@@ -135,19 +135,17 @@
       CALL STARTTIME (ncount1, 'RIS_CAL')
 
 !
-!   Initialise
+!   Initialise - 优化: 使用数组切片初始化更高效
 !
-      DO I = 1,NVEC
-         SMSC1(I)  = 0.0D00
-         SMSC2(I)  = 0.0D00
-         DENS1(I) = 0.0D00
-         DENS2(I) = 0.0D00
-         DENS3(I) = 0.0D00
-         DENS4(I) = 0.0D00
-         DENS5(I) = 0.0D00
-         DENS6(I) = 0.0D00
-         DENS7(I) = 0.0D00
-      ENDDO
+      SMSC1(:NVEC)  = 0.0D00
+      SMSC2(:NVEC)  = 0.0D00
+      DENS1(:NVEC)  = 0.0D00
+      DENS2(:NVEC)  = 0.0D00
+      DENS3(:NVEC)  = 0.0D00
+      DENS4(:NVEC)  = 0.0D00
+      DENS5(:NVEC)  = 0.0D00
+      DENS6(:NVEC)  = 0.0D00
+      DENS7(:NVEC)  = 0.0D00
 
 !      VSH   = .TRUE.
 !      SMSSH = .TRUE.
@@ -159,8 +157,18 @@
       write(*,*) ' Compute higher order field shift electronic factors?'
       YES2 = GETYN ()
 
-      DO 5 I = 1,NW
-        DO 4 J = 1,NW
+      ! 优化: 预先初始化所有数组为0，减少条件判断
+      DINT1(:,:) = 0.0D00
+      DINT2(:,:) = 0.0D00
+      DINT3(:,:) = 0.0D00
+      DINT4(:,:) = 0.0D00
+      DINT5(:,:) = 0.0D00
+      DINT6(:,:) = 0.0D00
+      DINT7(:,:) = 0.0D00
+      DINT1VEC(:,:,:) = 0.0D00
+      
+      DO I = 1, NW
+        DO J = 1, NW
           IF (NAK(I).EQ.NAK(J)) THEN
             DINT1(I,J) = RINTDENS(I,J)
             !GG                 DINT2(I,J) = RINTI(I,J,1)
@@ -172,42 +180,29 @@
             DINT4(I,J) = RINT(I,J,2)
             DINT5(I,J) = RINT(I,J,-1)
             DINT6(I,J) = RINT(I,J,-2)
-          ELSE
-            DINT1(I,J) = 0.0D00
-            DINT1VEC(I,J,:) = 0.0D00
-            DINT2(I,J) = 0.0D00
-            DINT3(I,J) = 0.0D00
-            DINT4(I,J) = 0.0D00
-            DINT5(I,J) = 0.0D00
-            DINT6(I,J) = 0.0D00
-            DINT7(I,J) = 0.0D00
           ENDIF
-    4   CONTINUE
-    5 CONTINUE
+        END DO
+      END DO
 !      ENDIF
 !
 !   Calculate and save the Vinti integrals
 !
 !      IF (SMSSH) THEN
-      DO 7 I = 1,NW
-        DO 6 J = 1,NW
+      ! 优化: 预先初始化数组
+      VINT(:,:) = 0.0D00
+      VINT2(:,:) = 0.0D00
+      
+      DO I = 1, NW
+        DO J = 1, NW
           IF (I.NE.J) THEN
             RCRE = CRE(NAK(I),1,NAK(J))
             IF (DABS(RCRE) .GT. CUTOFF) THEN
-              VINT  (I,J) = VINTI(I,J)
-              VINT2(I,J) = VINT(I,J)                                   &
-                         + RINT_SMS2(I,J)/RCRE                         &
-                         + RINT_SMS3(I,J)
-            ELSE
-             VINT (I,J) = 0.0D00
-             VINT2(I,J) = 0.0D00
+              VINT(I,J) = VINTI(I,J)
+              VINT2(I,J) = VINT(I,J) + RINT_SMS2(I,J)/RCRE + RINT_SMS3(I,J)
             ENDIF
-          ELSE
-            VINT (I,J) = 0.0D00
-            VINT2(I,J) = 0.0D00
           ENDIF
-    6   CONTINUE
-    7 CONTINUE
+        END DO
+      END DO
 !      ENDIF
 !
 !   See if the appropriate angular data is available. If so,
