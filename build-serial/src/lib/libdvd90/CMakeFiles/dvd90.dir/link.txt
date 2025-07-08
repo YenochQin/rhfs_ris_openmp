@@ -1,0 +1,2 @@
+/usr/sbin/ar qc ../../../lib/libdvd90.a CMakeFiles/dvd90.dir/adds_I.f90.o CMakeFiles/dvd90.dir/dvdrvr_I.f90.o CMakeFiles/dvd90.dir/dvdson_I.f90.o CMakeFiles/dvd90.dir/initdvd_I.f90.o CMakeFiles/dvd90.dir/mgs_nrm_I.f90.o CMakeFiles/dvd90.dir/multbc_I.f90.o CMakeFiles/dvd90.dir/newvec_I.f90.o CMakeFiles/dvd90.dir/ovflow_I.f90.o CMakeFiles/dvd90.dir/tstsel_I.f90.o CMakeFiles/dvd90.dir/dvdson.f90.o CMakeFiles/dvd90.dir/gdvd.f90.o CMakeFiles/dvd90.dir/gdvd_I.f90.o CMakeFiles/dvd90.dir/iniest.f90.o CMakeFiles/dvd90.dir/iniest_I.f90.o
+/usr/sbin/ranlib ../../../lib/libdvd90.a

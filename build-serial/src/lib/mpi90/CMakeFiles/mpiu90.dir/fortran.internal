@@ -1,0 +1,14 @@
+# The fortran modules provided by this target.
+provides
+ cpath_i.mod
+ cslhmpi_i.mod
+ iniestmpi_i.mod
+ lodcslmpi_i.mod
+ lodrwfmpi_i.mod
+ mpi_c.mod
+ setisompi_i.mod
+ setrwfmpi_i.mod
+ spicmvmpi_i.mod
+ sys_chdir_i.mod
+ sys_getwd_i.mod
+ sys_mkdir_i.mod

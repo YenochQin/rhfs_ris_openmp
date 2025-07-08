@@ -1,0 +1,12 @@
+# The fortran modules provided by this target.
+provides
+ engouth_i.mod
+ gethfd_i.mod
+ getmixblock_i.mod
+ hfsgg_i.mod
+ matelt_i.mod
+ opt6_c.mod
+ rinthf_i.mod
+ setdbg_i.mod
+ setsum_i.mod
+ strsum_i.mod

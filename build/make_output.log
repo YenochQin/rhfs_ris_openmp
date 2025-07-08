@@ -1,0 +1,9 @@
+[ 21%] Built target mod
+[ 24%] Built target dvd90
+[ 53%] Built target 9290
+[ 54%] Built target mcp90
+[ 59%] Built target mpiu90
+[ 95%] Built target rang90
+[ 95%] Building Fortran object src/rhfs90/CMakeFiles/rhfs.dir/hfsgg.f90.o
+[ 96%] Linking Fortran executable ../../bin/rhfs
+[100%] Built target rhfs

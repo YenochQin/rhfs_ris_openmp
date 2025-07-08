@@ -1,0 +1,43 @@
+-- The Fortran compiler identification is GNU 15.1.1
+-- Detecting Fortran compiler ABI info
+-- Detecting Fortran compiler ABI info - done
+-- Check for working Fortran compiler: /usr/sbin/f95 - skipped
+-- Looking for Fortran sgemm
+-- Looking for Fortran sgemm - not found
+-- Looking for Fortran sgemm
+-- Looking for Fortran sgemm - found
+-- Found BLAS: /usr/lib64/libflexiblas.so
+-- Looking for Fortran cheev
+-- Looking for Fortran cheev - found
+-- Found LAPACK: /usr/lib64/libflexiblas.so;/usr/lib64/libflexiblas.so
+-- Found OpenMP_Fortran: -fopenmp (found version "4.5")
+-- Found OpenMP: TRUE (found version "4.5")
+OpenMP support found and enabled
+Compiler flags etc. for this GRASP build:
+* CMAKE_BUILD_TYPE:                Release
+* CMAKE_Fortran_COMPILER:          /usr/sbin/f95
+* CMAKE_Fortran_COMPILER_VERSION:  15.1.1
+* CMAKE_Fortran_FLAGS:              -fopenmp -fallow-argument-mismatch -fallow-invalid-boz
+* CMAKE_Fortran_FLAGS_RELEASE:     -O3
+* CMAKE_Fortran_FLAGS_DEBUG:       -g
+* CMAKE_EXE_LINKER_FLAGS:           
+* CMAKE_STATIC_LINKER_FLAGS:       
+* CMAKE_RUNTIME_OUTPUT_DIRECTORY:  /home/qqqyy/AppFiles/rhfs90/build-serial/bin/
+* CMAKE_LIBRARY_OUTPUT_DIRECTORY:  /home/qqqyy/AppFiles/rhfs90/build-serial/lib/
+* CMAKE_ARCHIVE_OUTPUT_DIRECTORY:  /home/qqqyy/AppFiles/rhfs90/build-serial/lib/
+* CMAKE_POSITION_INDEPENDENT_CODE: 
+* BLAS_LIBRARIES:                  /usr/lib64/libflexiblas.so
+* BLAS_LINKER_FLAGS:               
+* LAPACK_LIBRARIES:                /usr/lib64/libflexiblas.so;/usr/lib64/libflexiblas.so
+* LAPACK_LINKER_FLAGS:             
+* OpenMP_Fortran_FLAGS:            -fopenmp
+* OpenMP_EXE_LINKER_FLAGS:         
+-- Found MPI_Fortran: /usr/lib64/openmpi/lib/libmpi_usempif08.so (found version "3.1")
+-- Found MPI: TRUE (found version "3.1")
+* MPI_Fortran_LIBRARIES:          /usr/lib64/openmpi/lib/libmpi_usempif08.so;/usr/lib64/openmpi/lib/libmpi_usempi_ignore_tkr.so;/usr/lib64/openmpi/lib/libmpi_mpifh.so;/usr/lib64/openmpi/lib/libmpi.so
+* MPI_Fortran_INCLUDE_PATH:       /usr/include/openmpi-x86_64;/usr/lib64/openmpi/lib
+* MPI_Fortran_COMPILE_FLAGS:      
+* MPI_Fortran_LINK_FLAGS:         -Wl,-rpath -Wl,/usr/lib64/openmpi/lib -Wl,--enable-new-dtags
+-- Configuring done (3.4s)
+-- Generating done (0.0s)
+-- Build files have been written to: /home/qqqyy/AppFiles/rhfs90/build-serial

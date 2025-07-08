@@ -1,0 +1,2 @@
+/usr/sbin/ar qc ../../../lib/libmcp90.a CMakeFiles/mcp90.dir/cxk.f90.o CMakeFiles/mcp90.dir/cxk_I.f90.o CMakeFiles/mcp90.dir/talk.f90.o CMakeFiles/mcp90.dir/talk_I.f90.o
+/usr/sbin/ranlib ../../../lib/libmcp90.a

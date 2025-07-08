@@ -1,0 +1,27 @@
+OpenMP support found and enabled
+Compiler flags etc. for this GRASP build:
+* CMAKE_BUILD_TYPE:                Release
+* CMAKE_Fortran_COMPILER:          /usr/sbin/f95
+* CMAKE_Fortran_COMPILER_VERSION:  15.1.1
+* CMAKE_Fortran_FLAGS:              -fopenmp -fallow-argument-mismatch -fallow-invalid-boz
+* CMAKE_Fortran_FLAGS_RELEASE:     -O3
+* CMAKE_Fortran_FLAGS_DEBUG:       -g
+* CMAKE_EXE_LINKER_FLAGS:           
+* CMAKE_STATIC_LINKER_FLAGS:       
+* CMAKE_RUNTIME_OUTPUT_DIRECTORY:  /home/qqqyy/AppFiles/rhfs90/build/bin/
+* CMAKE_LIBRARY_OUTPUT_DIRECTORY:  /home/qqqyy/AppFiles/rhfs90/build/lib/
+* CMAKE_ARCHIVE_OUTPUT_DIRECTORY:  /home/qqqyy/AppFiles/rhfs90/build/lib/
+* CMAKE_POSITION_INDEPENDENT_CODE: 
+* BLAS_LIBRARIES:                  /usr/lib64/libflexiblas.so
+* BLAS_LINKER_FLAGS:               
+* LAPACK_LIBRARIES:                /usr/lib64/libflexiblas.so;/usr/lib64/libflexiblas.so
+* LAPACK_LINKER_FLAGS:             
+* OpenMP_Fortran_FLAGS:            -fopenmp
+* OpenMP_EXE_LINKER_FLAGS:         
+* MPI_Fortran_LIBRARIES:          /usr/lib64/openmpi/lib/libmpi_usempif08.so;/usr/lib64/openmpi/lib/libmpi_usempi_ignore_tkr.so;/usr/lib64/openmpi/lib/libmpi_mpifh.so;/usr/lib64/openmpi/lib/libmpi.so
+* MPI_Fortran_INCLUDE_PATH:       /usr/include/openmpi-x86_64;/usr/lib64/openmpi/lib
+* MPI_Fortran_COMPILE_FLAGS:      
+* MPI_Fortran_LINK_FLAGS:         -Wl,-rpath -Wl,/usr/lib64/openmpi/lib -Wl,--enable-new-dtags
+-- Configuring done (1.8s)
+-- Generating done (0.1s)
+-- Build files have been written to: /home/qqqyy/AppFiles/rhfs90/build
