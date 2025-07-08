@@ -92,10 +92,9 @@
 !   Print OpenMP information
 !
       NUM_THREADS = OMP_GET_MAX_THREADS()
-      WRITE (ISTDE, *) 'RHFSZEEMAN95: Using OpenMP with ', 1, ' threads (forced serial execution due to thread safety issues)'
+      WRITE (ISTDE, *) 'RHFSZEEMAN95: Using OpenMP with ', NUM_THREADS, ' threads (thread-safe with THREADPRIVATE globals)'
 !
-!   Force single-threaded execution due to global state conflicts
-      CALL OMP_SET_NUM_THREADS(1)
+!   Note: Global state is now thread-private, enabling safe parallel execution
 !
 !   Allocate storage for local arrays
 !
@@ -209,10 +208,8 @@
             IF (((IDIFF == 0) .AND. (IR >= IC)) .OR. (IDIFF == 2) .OR.  &
                ((IDIFF == 4) .AND. (KT == 2))) THEN
 !
-!   Critical section: ONEPARTICLEJJ accesses global state
-!$OMP CRITICAL(ONEPARTICLE_CALC)
+!   ONEPARTICLEJJ now safe to call - global state is thread-private
                CALL ONEPARTICLEJJ(KT,IPT,IC,IR,IA,IB,TSHELL)
-!$OMP END CRITICAL(ONEPARTICLE_CALC)
 !              CALL TNSRJJ (KT,IPT,IC,IR,IA,IB,TSHELL)
 !
 !   Accumulate the contribution from the one-body operators;

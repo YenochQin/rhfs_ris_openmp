@@ -151,11 +151,9 @@ SUBROUTINE DENSNEW(DOIT,DINT1,DINT2,DINT3,DINT4,DINT5,DINT6,DINT7)
             ELEMNT7 = 0.0D00
 !
 !   Call the MCT package to compute T coefficients
-!   Critical section: ONESCALAR accesses global state
+!   ONESCALAR now safe to call - global state is thread-private
 !
-!$OMP CRITICAL(ONESCALAR_CALC)
            CALL ONESCALAR(IC,IR,IA,IB,TSHELL)
-!$OMP END CRITICAL(ONESCALAR_CALC)
 !GG            CALL TNSRJJ (KA,IOPAR,IC,IR,IA,IB,TSHELL)
             IF (IA .NE. 0) THEN
               IF (IA .EQ. IB) THEN

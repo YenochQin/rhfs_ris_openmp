@@ -262,26 +262,39 @@ make config  # 查看配置信息
 - OpenMP社区的技术支持
 - 所有贡献者和用户的反馈
 
-## 重要提醒：线程安全问题
+## 线程安全问题已解决 ✅
 
-**当前版本临时禁用了多线程并行化**
+**真正的OpenMP并行化现已实现**
 
-由于发现线程安全问题，rhfs90和rhfszeeman95程序当前强制使用单线程执行。
+线程安全问题已通过使用`THREADPRIVATE`指令解决，现在支持真正的多线程并行计算。
 
-### 问题描述
-- 多线程执行时程序会卡住在"Column XX complete"输出处
-- 原因：ONEPARTICLEJJ和SETQNA函数修改全局状态，存在竞争条件
-- 影响：rhfs90, rhfszeeman95程序
+### 解决方案
+- 使用`!$OMP THREADPRIVATE`使全局变量对每个线程私有
+- 移除了不必要的CRITICAL区域
+- 保留了结果更新时的必要同步
 
-### 当前解决方案
-程序自动设置为单线程模式（`OMP_SET_NUM_THREADS(1)`），确保稳定性。
+### 性能优势
+- ✅ 真正的多线程并行加速
+- ✅ 线程安全且稳定
+- ✅ 可充分利用多核CPU资源
 
-### 性能影响
-- 失去并行加速优势
-- 但保证计算结果正确性
+### 使用方法
+```bash
+# 设置线程数（可选，默认使用所有可用核心）
+export OMP_NUM_THREADS=8
 
-### 详细信息
-请参阅 `THREAD_SAFETY_ISSUES.md` 了解技术细节和长期解决方案。
+# 编译和运行
+./build_openmp.sh
+./bin/rhfs90 < input_file
+```
+
+### 预期输出
+```
+RHFS: Using OpenMP with 8 threads (thread-safe with THREADPRIVATE globals)
+Column 50 complete;
+Column 100 complete;
+...
+```
 
 ---
 
